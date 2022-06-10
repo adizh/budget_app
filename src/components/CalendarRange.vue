@@ -1,7 +1,7 @@
 <template>
 <section>
       <div  @click="areOptionVisible = !areOptionVisible" id="range_date" >
-      <p class='month_select'>{{ selectedMonth }}</p>
+      <p class='month_select'>{{  isDateSelected ? selectedMonth :  $t('selectedMonth2') }}</p>
       <v-date-picker
         mode="date"
         id="date_picker"
@@ -13,8 +13,7 @@
         is-dark
       />
     </div>
-<!-- <p>{{width}}</p> -->
-      <button class="btn btn-success clear_btn"  style='display:block; margin: 10px auto' @click="clearDate">clear</button>
+  <button class="btn btn-success clear_btn"  style='display:block; margin: 10px auto' @click="clearDate">{{$t('clearData')}}</button>
       </section>
 </template>
 
@@ -28,6 +27,7 @@
                  range: {
         start: new Date(2020, 0, 1),
         end: new Date(2020, 0, 5),
+        
       },
             }
         },
@@ -35,10 +35,12 @@
             selectedMonth:{
                 type:String
             },
+            isDateSelected:Boolean,
         },
         methods: {
             selectMonth(option){
                 this.$emit('selectMonth',option)
+            
             },hideSelect() {
       this.areOptionVisible = false;
     },

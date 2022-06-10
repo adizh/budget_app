@@ -12,9 +12,13 @@ import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
 import "bootstrap-icons/font/bootstrap-icons.css";
 
+// custom styles
+import './assets/css/styles.scss'
 
+/* import VGoogleTranslate from "v-google-translate"; */
+import i18n from "./plugins/i18n.js";
 
-
+/* Vue.use(VGoogleTranslate) */
 
 
 Vue.use(Vuetify)
@@ -25,13 +29,15 @@ Vue.use(VCalendar);
 Vue.component('calendar', Calendar);
 Vue.component('date-picker', DatePicker);
 
+import FlagIcon from 'vue-flag-icon';
 
+Vue.use(FlagIcon);
 /* store.subscribe( (mutation, state) => {
   localStorage.setItem('purchases', JSON.stringify(state.purchases));  
   
 })  */
 
 new Vue({
-  render: h => h(App)
- 
-}).$mount('#app')
+  i18n,
+  render: (h) => h(App),
+}).$mount("#app");

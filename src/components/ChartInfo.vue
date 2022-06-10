@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="monthChart">
-      <p class='each_month' @click="isMonthSelected = !isMonthSelected">{{ eachMonthChart }}</p>
+      <p class='each_month' @click="isMonthSelected = !isMonthSelected">{{ !isMonthVisible ? eachMonthChart :$t('selMonthChart') }}</p>
       <div  :class="isMonthSelected ? 'all_info_chart':''">
         <div
         v-show="isMonthSelected"
@@ -40,7 +40,7 @@ export default {
       type: Boolean,
       default: false,
     },
-  
+  isMonthVisible:Boolean,
     monthChartsOption: {
       type: Array,
     },

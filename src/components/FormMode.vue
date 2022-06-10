@@ -2,6 +2,7 @@
   <section>
     <CalendarRange
       :selectedMonth="selectedMonth"
+      :isDateSelected="isDateSelected"
       @selectMonth="selectMonth"
       @clearDate="clearDate"
     />
@@ -18,25 +19,25 @@
       @changePerDayMed="changePerDayMed"
       :medPriceAcc="medPriceAcc"
     />
-    <MainChart :purchases='purchases' />
+    <MainChart :purchases="purchases" :languages="languages" />
 
     <ChartInfo
       @selectNameChart="selectNameChart"
       :eachMonthChart="eachMonthChart"
       :monthChartsOption="monthChartsOption"
       :isChartVisible="isChartVisible"
+      :isMonthVisible="isMonthVisible"
       :purchases="purchases"
     />
     <form v-if="formMode" @submit.prevent="addTodo" class="main_form">
-      <label for="name"
-        >Name
+      <label for="name">{{ $t("Name") }}
         <input
           required
           id="name"
           class="form-control inputs"
           type="text"
           v-model="input"
-          ref='editPurchaseName'
+          ref="editPurchaseName"
         />
       </label>
       <p
@@ -44,10 +45,10 @@
         role="alert"
         v-if="isNameSmall"
       >
-        Name must be bigger 3 letters!
+        {{ $t("NameProblem") }}
       </p>
       <label for="price" name="price"
-        >Price
+        >{{ $t("Price") }}
         <input
           required
           id="price"
@@ -61,10 +62,10 @@
         role="alert"
         v-if="isPriceNegative"
       >
-        Price must be positive only!
+        {{ $t("PriceProblem") }}
       </p>
-      <label for="date"
-        >Date
+      <label for="date">
+        {{ $t("Time") }}
         <input
           required
           class="form-control inputs"
@@ -81,12 +82,12 @@
           class="btn btn-info selBtn"
           type="button"
         >
-          {{ selected_type }}
+          {{ isTypeSel ? $t("typeSelect") : selected_type }}
         </button>
         <div class="types">
           <ul
             v-show="areTypesVisible"
-            v-for="types in purchaseType"
+            v-for="types in $t('purchaseType2')"
             :key="types.name"
             @click="selectTypeOfPurchase(types)"
           >
@@ -100,67 +101,71 @@
         class="btn btn-primary addBtn"
         type="submit"
       >
-        {{ def }}
+        {{ $t("default") }}
       </button>
-      <button @click='updateValue' class="btn btn-primary addBtn" type="submit" v-else>
-        {{ updatedVersion }}
+      <button
+        @click="updateValue"
+        class="btn btn-primary addBtn"
+        type="submit"
+        v-else
+      >
+        {{ $t("updatedVersion") }}
       </button>
     </form>
 
-    <CategoryChart 
-    :purchases='purchases'
-    :typeSelected='typeSelected' :isCatVisible="isCatVisible" 
-    :purchaseType="purchaseType" @filterType='filterType'
-    :sortedPro='sortedPro'
+    <CategoryChart
+      :purchases="purchases"
+      :typeSelected="typeSelected"
+      :isCatVisible="isCatVisible"
+      :purchaseType2="$t('purchaseType2')"
+      @filterType="filterType"
+      :isDefault="isDefault"
+      :sortedPro="sortedPro"
     />
 
-<Favourites 
-  
-   :purchases='purchases'
-   />
+    <Favourites :purchases="purchases" />
     <Purchases
       :editName="editName"
       @editTodo="editTodo"
       :sortedPro="sortedPro"
       :filteredPro="filteredPro"
       :arePurchasesVisible="arePurchasesVisible"
-      
-      @addToFav='addToFav'
-   
+      @addToFav="addToFav"
     />
-
-    <PriceFilter :sortedPro="sortedPro" @selectPrice="selectPrice" />
-    
-
-
-    <div class="total">Total sum: {{ totalSum }}</div>
+    <PriceFilter :isPriceChooses="isPriceChooses" :sortedPro="sortedPro" @selectPrice="selectPrice" />
+    <div class = "total">{{$t('Totalsum')}} : {{ totalSum }} сом </div>
   </section>
 </template>
 
 <script>
+import Vue from "vue";
 
 import Purchases from "./Purchases.vue";
 import PriceFilter from "./PriceFilter.vue";
 import CalendarRange from "./CalendarRange.vue";
 import MainChart from "./MainChart.vue";
-import Favourites from './Favourites.vue'
+import Favourites from "./Favourites.vue";
 import BudgetInfo from "./BudgetInfo.vue";
 import ChartInfo from "./ChartInfo.vue";
 import CategoryChart from "./CategoryChart.vue";
+import i18n from "../plugins/i18n.js";
 export default {
   name: "FormMode",
   data() {
     return {
       input: "",
-      purchases:[],
+      isDateSelected: false,
+      purchases: [],
       numberInput: "",
       selected_type: "select a type",
       dateNow: "",
       editName: false,
+      lan: "",
+      isTypeSel: true,
       editing: null,
       priceEditing: null,
       dateEditing: null,
-      typeEditing:null,
+      typeEditing: null,
       updatedName: "",
       areTypesVisible: false,
       isNameSmall: false,
@@ -168,10 +173,8 @@ export default {
       day: "",
       month: "",
       sortedPro: [],
-      def: "Add",
-      updatedVersion: "update",
-      selectedMonth: "Select a day",
 
+      selectedMonth: "Select a day",
       startDay: "",
       endDay: "",
       startMonth: "",
@@ -180,6 +183,7 @@ export default {
       arePurchasesVisible: false,
       isMonthChoosen: false,
       isTypeSelected: false,
+      isMonthVisible: true,
       percent: 0,
       isChartVisible: false,
       total_budget_value: "",
@@ -191,6 +195,7 @@ export default {
       perDayMed: 0,
       totalBudgetData: new Date(),
       isCatVisible: false,
+        isPriceChooses:true,
       formMode: true,
       purchaseType: [
         { name: "Food" },
@@ -199,7 +204,8 @@ export default {
         { name: "Internet" },
         { name: "Entertainment" },
       ],
-   typeSelected:'Filter by type',
+      typeSelected: "Filter by type",
+      isDefault: true,
       monthChartsOption: [
         { name: "January" },
         { name: "February" },
@@ -214,8 +220,7 @@ export default {
         { name: "November" },
         { name: "December" },
       ],
-      typeNameSelected:false,
-    
+      typeNameSelected: false,
     };
   },
   components: {
@@ -226,31 +231,35 @@ export default {
     MainChart,
     ChartInfo,
     CategoryChart,
-    Favourites
+    Favourites,
   },
-  props: {},
+  props: {
+    languages: {
+      type: Array,
+    },
+  },
 
   methods: {
- 
-addToFav(todo){
-this.purchases.map((e)=>{
-  if(e.id == todo.id){
-      e.isFavourite = !e.isFavourite
-
-  }
-this.savePurchase()
-})
-
-},
+    addToFav(todo) {
+      this.purchases.map((e) => {
+        if (e.id == todo.id) {
+          e.isFavourite = !e.isFavourite;
+        }
+        this.savePurchase();
+      });
+    },
     selectNameChart(option) {
       this.eachMonthChart = option.name;
       this.isChartVisible = true;
+      this.isMonthVisible = false;
     },
     selectTypeOfPurchase(type) {
       this.isTypeSelected = true;
       this.selected_type = "";
       this.selected_type = type.name;
       this.areTypesVisible = false;
+      this.isTypeSel = false;
+      console.log(i18n.locale);
     },
     updateValue() {
       let regex = /\d/g;
@@ -259,55 +268,50 @@ this.savePurchase()
         this.rest_budget = (+this.total_budget_value * +this.percent) / 100;
       }
     },
-   
+
     addTodo() {
       if (
         this.editing !== null &&
         this.priceEditing !== null &&
         this.dateEditing !== null &&
-        this.typeEditing!== null
+        this.typeEditing !== null
       ) {
         this.purchases[this.editing].name = this.input;
         this.purchases[this.priceEditing].price = +this.numberInput;
         this.purchases[this.dateEditing].dateInput = this.dateNow;
-        this.purchases[this.typeEditing].types=this.selected_type
+        this.purchases[this.typeEditing].types = this.selected_type;
         this.editing = null;
         this.priceEditing = null;
         this.dateEditing = null;
-        this.typeEditing=null;
+        this.typeEditing = null;
         this.editName = false;
-             this.percent =
-        parseInt(this.percent) -
-        (this.totalSum * 100) / this.total_budget_value +
-        "%";
-      this.rest_budget = +this.total_budget_value - this.totalSum;
-        this.saveCounter()
-        this.saveMainBudget()
-        this.savePurchase()
-       
-
+        this.percent =
+          parseInt(this.percent) -
+          (this.totalSum * 100) / this.total_budget_value +
+          "%";
+        this.rest_budget = +this.total_budget_value - this.totalSum;
+        this.saveCounter();
+        this.saveMainBudget();
+        this.savePurchase();
       } else if (
         this.input.length >= 4 &&
         this.numberInput.length &&
         this.isTypeSelected
       ) {
-        this.purchases.push(
-          {
+        this.purchases.push({
           name: this.input,
           done: false,
           id: Math.random(),
           price: +this.numberInput,
           dateInput: this.dateNow,
           types: this.selected_type,
-          isFavourite:false
-        }
-        )
-         
+          isFavourite: false,
+        });
+
         this.arePurchasesVisible = true;
         this.sortedPro = [...this.purchases];
         this.editName = false;
         this.isCatVisible = true;
-   
       }
       let todays_date = new Date();
       let todays_day = todays_date.getDate();
@@ -343,8 +347,6 @@ this.savePurchase()
           this.total_budget_value && +this.total_budget_value - this.totalSum;
       }
 
-
-
       if (this.numberInput < 1) {
         this.isPriceNegative = true;
         setTimeout(() => {
@@ -360,72 +362,78 @@ this.savePurchase()
       this.input = "";
       this.numberInput = "";
       this.dateNow = "";
-           this.saveCounter()
-   this.savePurchase()
-      this.saveMainBudget()
+      this.saveCounter();
+      this.savePurchase();
+      this.saveMainBudget();
+
+      Vue.forceUpdate();
     },
-    
+
     editTodo(index) {
-    /*   this.input = "";
-      this.numberInput = "";
-      this.dateNow = "";  */ 
-this.$refs.editPurchaseName.focus()
+      this.$refs.editPurchaseName.focus();
       this.editName = true;
       this.input = this.purchases[index].name;
       this.numberInput = +this.purchases[index].price;
       this.dateNow = this.purchases[index].dateInput;
-      this.selected_type = this.purchases[index].types
+      this.selected_type = this.purchases[index].types;
       this.editing = index;
       this.priceEditing = index;
       this.dateEditing = index;
-      this.typeEditing=index;
- 
+      this.typeEditing = index;
     },
-     savePurchase() {
-      localStorage.setItem("purchases",JSON.stringify(this.purchases));
+    savePurchase() {
+      localStorage.setItem("purchases", JSON.stringify(this.purchases));
     },
-             
-    
+
     clearDate() {
       this.selectedMonth = "Select a day";
       return (this.sortedPro = [...this.purchases]);
     },
- saveCounter(){
-            localStorage.rest_budget= +this.rest_budget
-        },
-         saveMainBudget(){
-            localStorage.total_budget_value= +this.total_budget_value
-            localStorage.percent=this.percent
-            localStorage.perDayMed=this.perDayMed
-            localStorage.totalBudgetData=this.totalBudgetData
-           
-        },
+    saveCounter() {
+      localStorage.rest_budget = +this.rest_budget;
+    },
+    saveMainBudget() {
+      localStorage.total_budget_value = +this.total_budget_value;
+      localStorage.percent = this.percent;
+      localStorage.perDayMed = this.perDayMed;
+      localStorage.totalBudgetData = this.totalBudgetData;
+    },
 
-
-filterType(type){
-    this.typeSelected=type.name
-    this.typeNameSelected=true;
-  this.sortedPro= this.purchases.filter((e)=>{
-if(type.name==='All'){
-  return this.purchases
-}
-    return e.types === type.name
-  })
-},
+    filterType(type) {
+      this.typeSelected = type.name;
+      this.typeNameSelected = true;
+      this.isDefault = false;
+      this.sortedPro = this.purchases.filter((e) => {
+        if (type.name === "All" || type.name === "Все") {
+          return this.purchases;
+        }
+        const typeObj ={
+          'Еда':'Food',
+          "Транспорт":'Transport',
+          'Медицина':'Medicine',
+          'Интернет':'Internet',
+          'Другое':'Entertainment'
+        }
+        return  i18n.locale ==='en'? e.types === type.name : typeObj[type.name ] === e.types;
+      });
+    },
     selectPrice(price) {
+      this.isPriceChooses=false;
       this.sortedPro = [...this.purchases];
-       let month;
-        let day;
-         let optionDay;
-          let optionMonth;
-          let endDays;
-          let endMonth;
+      let month;
+      let day;
+      let optionDay;
+      let optionMonth;
+      let endDays;
+      let endMonth;
       this.sortedPro = this.sortedPro.filter((e) => {
-        return price.name === "High"
+        return price.name === "High" || price.name==="Высокий"
           ? e.price > 100
-          : price.name === "Moderate"
+          : price.name === "Moderate" || price.name==='Средний'
           ? e.price >= 50 && e.price < 100
-          :price.name ==='All' ? this.purchases :  e.price < 50;
+          : price.name === "All" || price.name==='Все'
+          ? this.purchases
+          : e.price < 50;
       });
 
       if (this.isMonthChoosen && this.selectedMonth.length > 12) {
@@ -438,7 +446,6 @@ if(type.name==='All'){
           if (day.startsWith("0")) {
             day = day.split("")[1];
           }
-         
           optionDay = this.selectedMonth.split(".")[0];
           if (optionDay.startsWith("0")) {
             optionDay = optionDay.split("")[1];
@@ -461,11 +468,13 @@ if(type.name==='All'){
             Number(month) >= Number(optionMonth) &&
             Number(month) <= Number(endMonth)
           ) {
-            return price.name === "High"
-              ? e.price > 100
-              : price.name === "Moderate"
-              ? e.price >= 50 && e.price < 100
-              : e.price < 50;
+            return price.name === "High" || price.name ===  "Высокий"
+          ? e.price > 100
+          : price.name === "Moderate" || price.name ==='Средний'
+          ? e.price >= 50 && e.price < 100
+          : price.name === "All" || price.name === 'Все'
+          ? this.purchases
+          : e.price < 50;
           }
         });
       }
@@ -491,7 +500,6 @@ if(type.name==='All'){
             ? this.endMonth
             : "0" + this.endMonth
         }`;
-
         this.sortedPro = this.purchases.filter((item) => {
           this.day = item.dateInput.split("-")[2];
           this.month = item.dateInput.split("-")[1];
@@ -510,8 +518,8 @@ if(type.name==='All'){
           );
         });
       }
+      this.isDateSelected = true;
     },
-
     totalBudget(prop_total_budget) {
       this.isTotalVisible = true;
       this.isPercentVisible = true;
@@ -533,8 +541,8 @@ if(type.name==='All'){
       if (prop_total_budget.length) {
         prop_total_budget = "";
       }
-     this.saveMainBudget()
-     this.saveCounter()
+      this.saveMainBudget();
+      this.saveCounter();
     },
 
     changePerDayMed() {
@@ -542,14 +550,18 @@ if(type.name==='All'){
       setTimeout(() => {
         this.medPriceAcc = false;
       }, 3000);
-      this.saveMainBudget()
+      this.saveMainBudget();
     },
   },
- created(){
- this.purchases = JSON.parse(localStorage.getItem('purchases')||[])
-}, 
+  created() {
+    this.purchases = JSON.parse(localStorage.getItem("purchases") || []);
+  },
   computed: {
-   
+    theme() {
+      let theme = localStorage.getItem("theme");
+
+      return theme;
+    },
     filteredPro() {
       if (this.sortedPro.length) {
         return this.sortedPro;
@@ -574,50 +586,47 @@ if(type.name==='All'){
   },
 
   mounted() {
+    this.lan = i18n.locale;
+    console.log(this.lan);
+
     if (this.purchases.length) {
       this.sortedPro = [...this.purchases];
-       this.isCatVisible = true; 
+      this.isCatVisible = true;
     }
- if(localStorage.total_budget_value){
-  this.total_budget_value = +localStorage.total_budget_value
+    if (localStorage.total_budget_value) {
+      this.total_budget_value = +localStorage.total_budget_value;
 
-        this.isTotalVisible=true; 
-        this.isPercentVisible=true;
- }
- if(localStorage.rest_budget){
-   this.rest_budget = +localStorage.rest_budget
- }
- if(localStorage.rest_budget){
-   this.rest_budget = localStorage.rest_budget
- }
- if(localStorage.names){
-  this.purchases[this.editing].name  = localStorage.names
-  
- }
- if(localStorage.perDayMed){
-   this.perDayMed = localStorage.perDayMed
- }
-  if(localStorage.percent){
-   this.percent = localStorage.percent
- }
-  if(localStorage.totalBudgetData){
-   this.totalBudgetData = localStorage.totalBudgetData
- }
-
- 
+      this.isTotalVisible = true;
+      this.isPercentVisible = true;
+    }
+    if (localStorage.rest_budget) {
+      this.rest_budget = +localStorage.rest_budget;
+    }
+    if (localStorage.rest_budget) {
+      this.rest_budget = localStorage.rest_budget;
+    }
+    if (localStorage.names) {
+      this.purchases[this.editing].name = localStorage.names;
+    }
+    if (localStorage.perDayMed) {
+      this.perDayMed = localStorage.perDayMed;
+    }
+    if (localStorage.percent) {
+      this.percent = localStorage.percent;
+    }
+    if (localStorage.totalBudgetData) {
+      this.totalBudgetData = localStorage.totalBudgetData;
+    }
   },
 
   watch: {
     purchasesyu: {
-      handler: function(updatedList) {
-        localStorage.setItem('purchases', JSON.stringify(updatedList));
+      handler: function (updatedList) {
+        localStorage.setItem("purchases", JSON.stringify(updatedList));
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
-
-
- 
 };
 </script>
 
@@ -626,6 +635,13 @@ if(type.name==='All'){
   margin: 20px auto;
   display: flex;
   flex-direction: column;
+}
+
+.dark_theme {
+  color: white;
+}
+.light_theme {
+  color: #000000;
 }
 .typesArea {
   margin: 10px auto;
@@ -671,8 +687,8 @@ li {
   margin: 10px auto;
 }
 @media (min-width: 250px) and (max-width: 450px) {
-.inputs{
-  width:80%;
-}
+  .inputs {
+    width: 80%;
+  }
 }
 </style>

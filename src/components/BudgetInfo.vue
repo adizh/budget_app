@@ -10,12 +10,15 @@
         :placeholder=" !isTotalChanged  ? 'type a total budget' : 'change the budget'"
       />
     </div>
-   <div v-if="isTotalVisible"  class="total_budget">
-      <p>Total budget {{ total_budget_value }}</p>
-        <button type='button' @click='changeTheTotalBudget' class='btn btn-danger'>Change  budget</button>
-      <p>Res budget {{ rest_budget }}</p>
+    
+   <div v-if="isTotalVisible"  class="total_budget"  >
+      <p>  {{$t('Totalbudget')}}  {{ total_budget_value }} {{$t('som')}} </p>
+        <button type='button' @click='changeTheTotalBudget' class='btn btn-danger'>
+        {{$t('Changebudget')}} 
+        </button>
+      <p>{{$t('leftBudget')}}  {{ rest_budget }} {{$t('som')}}</p>
       <div>{{ totalBudgetData | moment }}</div>
-      <div>Per day medium {{ perDayMed }}</div>
+      <div> {{$t('Perdaymedium')}}  {{ perDayMed }} {{$t('som')}}</div>
     </div>
  <div class='progress_bar'>
    <v-progress-circular
@@ -43,9 +46,9 @@
       >
         <use xlink:href="#exclamation-triangle-fill" />
       </svg>
-      <div>You accelareted per day medium plan</div>
+      <div> {{$t('accText')}} </div>
       <button class="btn btn-danger" @click="changePerDayMed">
-        Change the plan
+         {{$t('Changetheplan')}}
       </button>
     </div>
 
@@ -81,10 +84,7 @@ import moment from "moment";
       return moment();
     },
              totalBudget() {
-      this.$emit('totalBudget',this.total_budget);
-      console.log('date bufget',typeof this.totalBudgetData)
-
-
+      this.$emit('totalBudget',this.total_budget)
    setTimeout(() => {
 this.total_budget = ''
    },1000) 
@@ -107,20 +107,41 @@ changeTheTotalBudget(){
     },
   },
 
+computed:{
+     theme(){
+           let theme = localStorage.getItem("theme")
+       
+           return theme
+       }
+},
+mounted(){
+  //let theme = localStorage.getItem("theme")
 
+    let htmlElement = document.documentElement;
+  console.log('htmlElement',htmlElement)
+}
 
     }
 </script>
 
 <style  scoped>
+.dark_theme{
+  color:white
+
+
+}
+.light_theme{
+  color:#000000;
+}
 .inputs{
-      width: 29%;
+    width: 29%;
     margin: 18px auto 7px;
 }
 .total_budget{
   display: flex;
-    flex-direction: column;
-    align-items: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 #info{
       display: flex;

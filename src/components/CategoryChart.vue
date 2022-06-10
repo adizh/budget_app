@@ -3,7 +3,7 @@
     <pie-chart :data="categoryOptions"></pie-chart>
 
 <div class='selectType'>
-  <p @click='isTypeNameSelected = !isTypeNameSelected' class="select_type">{{typeSelected}}</p>
+  <p @click='isTypeNameSelected = !isTypeNameSelected' class="select_type">{{ isDefault ? $t('typeFilter'):typeSelected}}</p>
 <div :class="isTypeNameSelected ? 'types':''">
 <div v-show='isTypeNameSelected'  @click='filterType(type)' v-for='type in  newTypeOptions' :key='type.name'>
   <p>{{type.name}}</p>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-
+import i18n from '../plugins/i18n.js'
 export default {
   name: "CategoryChart",
   data() {
@@ -26,11 +26,12 @@ isTypeNameSelected:false,
     };
   },
   props: {
-    purchaseType: Array,
+    purchaseType2: Array,
     isCatVisible: Boolean,
     typeSelected:String,
     purchases:Array,
-    sortedPro:Array
+    sortedPro:Array,
+    isDefault:Boolean
   },
   methods: {
 filterType(type){
@@ -63,10 +64,16 @@ filterType(type){
 
 newTypeOptions(){
   let newObj=[]
-  for(let i=0;i<this.purchaseType.length;i++){
-newObj.push(this.purchaseType[i])
+  for(let i=0;i<this.purchaseType2.length;i++){
+newObj.push(this.purchaseType2[i])
   }
-  newObj.unshift({name:'All'})
+if(i18n.locale==='en'){
+newObj.unshift({name:'All'})
+}else{
+newObj.unshift({name:'Все'})
+}
+
+  
   return newObj
 },
 
@@ -125,15 +132,28 @@ newObj.push(this.purchaseType[i])
     },
 
     categoryOptions() {
-      return {
+      let catObj={}
+      if(i18n.locale ==='en'){
+      catObj = {
         Food: this.foodSum,
         Internet: this.internSum,
         Medicine: this.medicintSum,
         Transport: this.transportSum,
         Entertainment: this.entertainSum,
-      };
-    },
+      }
+
+    }else{
+          catObj = {
+        Еда: this.foodSum,
+        Интернет: this.internSum,
+        Медицина: this.medicintSum,
+        Транспорт: this.transportSum,
+        Другое: this.entertainSum,
+      }
+    }
+    return catObj
   },
+  }
 };
 </script>
 

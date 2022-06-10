@@ -4,7 +4,10 @@
 <!-- Button trigger modal -->
  <div class='show_fav'>
 <button type="button" class="btn btn-primary show_fav" data-toggle="modal" data-target="#exampleModal">
-    show favourites
+ <!--   {{$t(' showfavourites')}} -->
+
+    {{$t('showfavourites')}}
+
 </button>
  </div>
 <!-- Modal -->
@@ -12,7 +15,7 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Favourites</h5>
+        <h5 class="modal-title" id="exampleModalLabel"> {{$t('showfavourites')}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -39,7 +42,7 @@
           >
             <th scope="row">{{ index + 1 }}</th>
             <td >{{todo.name}}</td>
-            <td>{{ todo.price }} сом</td>
+            <td>{{ todo.price }} {{$t('som')}}  </td>
             <td>{{ todo.dateInput | moment }}    
        </td>
           </tr>
@@ -56,7 +59,7 @@
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{$t('Close')}}</button>
       </div>
     </div>
   </div>
@@ -98,7 +101,7 @@ import moment from 'moment'
 
 <style  scoped>
 .show_fav{
-    text-align:right;
+    text-align:center;
     width:68%;
 }
 
@@ -146,11 +149,9 @@ text-align: right;
     margin: 0 auto;
 }
 .show_fav button{
-  width:52%
+    width: 74%;
 }
-.expenses{
-  position:relative;
-}
+
 #alert_fav{
     margin: 0 auto;
     top: 50%;

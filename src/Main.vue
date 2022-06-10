@@ -261,7 +261,7 @@ export default {
       endMonth: "",
       isTotalVisible: false,
       percent: 0,
-      marchArr: [],
+  
       rest_budget: 0,
       isChartVisible:false
     };
@@ -801,10 +801,8 @@ showMin(){
 };
 </script>
 <style>
-#range_date {
-}
-#date_picker {
-}
+
+
 #myCanvas {
   width: 100px;
   height: 100px;

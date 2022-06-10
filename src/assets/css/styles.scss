@@ -1,0 +1,69 @@
+@import 'theme-colors';
+
+
+/* html, body {
+  height: 100%;
+} */
+
+.container {
+  max-width: 1040px;
+}
+
+.app-background {
+  background-color: var(--app-background-color);
+}
+
+.dynamic-title {
+  color: var(--dynamic-title-color);
+}
+
+.total_budget{
+  color: var(--dynamic-title-color); 
+}
+.main_form{
+  color: var(--dynamic-title-color); 
+}
+.total{
+  color: var(--dynamic-title-color); 
+}
+.no_purchase{
+  color: var(--dynamic-title-color); 
+}
+.rows_table{
+  color: var(--dynamic-title-color);  
+}
+div .language{
+  color: var(--dynamic-title-color);    
+}
+.lan_title{
+  color: var(--dynamic-title-color);    
+}
+div .eo__dropdown__menu{
+  background: var(--app2-background-color);
+}
+
+
+.dynamic-subtitle {
+  color: var(--dynamic-subtitle-color);
+  padding-top: 10px;
+}
+
+/*
+* === THEME SWITCH ===
+*/
+input.theme-switch {
+  display: none;
+}
+
+input.theme-switch + label {
+  cursor: pointer;
+}
+
+input.theme-switch:not(:checked) + label:hover {
+  cursor: pointer;
+}
+
+input.theme-switch + label:active,
+input.theme-switch:checked + label {
+  cursor: pointer;
+}

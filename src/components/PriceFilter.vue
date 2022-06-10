@@ -1,9 +1,9 @@
 <template>
-   <div class="filterByPrice">
-      <p @click="arePricesVisible = !arePricesVisible">{{priceName}}</p>
+   <div :class="theme === 'dark'?'dark_theme':'light_theme'"  class="filterByPrice">
+      <p @click="arePricesVisible = !arePricesVisible">{{ isPriceChooses ? $t('typeFilter'):priceName}}</p>
       <div
         v-show="arePricesVisible"
-        v-for="price in pricesOption"
+        v-for="price in $t('pricesOption')"
         :key="price.name"
          @click="selectPrice(price)"
       >
@@ -18,22 +18,27 @@
        data(){
            return{
                 arePricesVisible:false,
-        pricesOption:[{name:'All'},{ name: "High" }, { name: "Moderate" }, { name: "Low" }],
-        priceName:'Filter by price'
+                priceName:''
            }
        },
        props:{
         sortedPro:{
             type:Array,
-        }
+        },
+        isPriceChooses:Boolean,
        },
        computed: {
-
+ theme(){
+           let theme = localStorage.getItem("theme")
+       
+           return theme
+       },
        },
        methods:{
            selectPrice(price){
                this.priceName=price.name
            this.$emit('selectPrice',price)
+         
            },
              hideSelect() {
      
@@ -46,11 +51,13 @@
   },
   destroyed() {
     document.removeEventListener("click", this.hideSelect);
+  
   },
     }
 </script>
 
 <style  scoped>
+
 .filterByPrice{
     background: burlywood;
     margin: 10px auto;
@@ -64,6 +71,12 @@
 }
 .price_option{
      padding: 4px;
+}
+.dark_theme{
+  color:white
+}
+.light_theme{
+  color:#000000;
 }
 .price_option:hover{
     display: inline-block;

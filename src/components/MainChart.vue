@@ -2,11 +2,11 @@
     <div id='main_chart'>
       <button class='btn btn-primary info_btn' @click='isMainChartVisible =!isMainChartVisible'>
 
-{{!isMainChartVisible ? 'Show main chart info '  :'Hide Chart Info'}}
+{{!isMainChartVisible ?   $t('Showchart') : $t('Hidechart')}}
 
       </button>
   <div v-show='isMainChartVisible'>
-           <div >Max month: {{showMax}}  <button >Min month: {{showMin}}</button></div>
+           <div > {{$t('Maxmonth') }}: {{showMax}}  <button >  {{$t('Minmonth') }}: {{showMin}}</button></div>
    <column-chart   :min='0'  :data="columnData"
        ></column-chart>  
   </div>
@@ -23,7 +23,8 @@
             }
         },
         props: {
-          purchases:Array
+          purchases:Array,
+          languages:Array
         },
         computed:{
  janTotalSum() {
@@ -232,10 +233,11 @@
       }, 0);
       return count;
     },
-
-
               columnData() {
-      return [
+      return this.languages.map((e)=>{
+        if(e.language == 'en'){
+          console.log('its enlish')
+          return [
         ['Jan', this.janTotalSum],
         ["Feb", this.febTotalSum],
         ["Mar", this.marchTotalSum],
@@ -248,7 +250,27 @@
         ["Oct", this.octTotalSum],
         ["Nov", this.novTotalSum],
         ["Dec", this.decTotalSum],
-      ];
+      ]
+        }
+        else{
+        console.log('its russia')
+         return   [
+        ['Янва', this.janTotalSum],
+        ["Feb", this.febTotalSum],
+        ["Mar", this.marchTotalSum],
+        ["Apr", this.apTotalSum],
+        ["May", this.mayTotalSum],
+        ["Jun", this.junTotalSum],
+        ["Jul", this.julTotalSum],
+        ["Aug", this.augTotalSum],
+        ["Sep", this.sepTotalSum],
+        ["Oct", this.octTotalSum],
+        ["Nov", this.novTotalSum],
+        ["Dec", this.decTotalSum],
+      ]
+          }
+        
+      })
     },
       showMax(){
       let arr = [this.janTotalSum,this.febTotalSum,this.marchTotalSum,
