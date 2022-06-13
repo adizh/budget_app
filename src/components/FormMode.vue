@@ -7,6 +7,7 @@
       @clearDate="clearDate"
     />
     <BudgetInfo
+      :isPlanChanged="isPlanChanged"
       :total_budget_value="total_budget_value"
       :total_budget="total_budget"
       :isTotalVisible="isTotalVisible"
@@ -17,20 +18,20 @@
       :totalBudgetData="totalBudgetData"
       @totalBudget="totalBudget"
       @changePerDayMed="changePerDayMed"
-      :medPriceAcc="medPriceAcc"
     />
     <MainChart :purchases="purchases" :languages="languages" />
 
     <ChartInfo
       @selectNameChart="selectNameChart"
       :eachMonthChart="eachMonthChart"
-      :monthChartsOption="monthChartsOption"
+      :monthChartsOption="$t('monthChartsOption')"
       :isChartVisible="isChartVisible"
       :isMonthVisible="isMonthVisible"
       :purchases="purchases"
     />
     <form v-if="formMode" @submit.prevent="addTodo" class="main_form">
-      <label for="name">{{ $t("Name") }}
+      <label for="name"
+        >{{ $t("Name") }}
         <input
           required
           id="name"
@@ -113,6 +114,25 @@
       </button>
     </form>
 
+    <div
+      v-if="medPriceAcc"
+      class="alert alert-danger d-flex align-items-center alert_med_price"
+      role="alert"
+    >
+      <svg
+        class="bi flex-shrink-0 me-2"
+        width="24"
+        height="24"
+        role="img"
+        aria-label="Danger:"
+      >
+        <use xlink:href="#exclamation-triangle-fill" />
+      </svg>
+      <div>{{ $t("accText") }}</div>
+      <a class="btn btn-danger" href="#budgetInfo" @click="changePerDayMed">
+        {{ $t("Changetheplan") }}
+      </a>
+    </div>
     <CategoryChart
       :purchases="purchases"
       :typeSelected="typeSelected"
@@ -132,14 +152,18 @@
       :arePurchasesVisible="arePurchasesVisible"
       @addToFav="addToFav"
     />
-    <PriceFilter :isPriceChooses="isPriceChooses" :sortedPro="sortedPro" @selectPrice="selectPrice" />
-    <div class = "total">{{$t('Totalsum')}} : {{ totalSum }} сом </div>
+    <PriceFilter
+      :isPriceChooses="isPriceChooses"
+      :sortedPro="sortedPro"
+      @selectPrice="selectPrice"
+    />
+    <div class="total">
+      {{ $t("Totalsum") }} : {{ totalSum }} {{ $t("som") }}
+    </div>
   </section>
 </template>
 
 <script>
-import Vue from "vue";
-
 import Purchases from "./Purchases.vue";
 import PriceFilter from "./PriceFilter.vue";
 import CalendarRange from "./CalendarRange.vue";
@@ -155,6 +179,7 @@ export default {
     return {
       input: "",
       isDateSelected: false,
+      isPlanChanged: false,
       purchases: [],
       numberInput: "",
       selected_type: "select a type",
@@ -195,7 +220,7 @@ export default {
       perDayMed: 0,
       totalBudgetData: new Date(),
       isCatVisible: false,
-        isPriceChooses:true,
+      isPriceChooses: true,
       formMode: true,
       purchaseType: [
         { name: "Food" },
@@ -206,20 +231,7 @@ export default {
       ],
       typeSelected: "Filter by type",
       isDefault: true,
-      monthChartsOption: [
-        { name: "January" },
-        { name: "February" },
-        { name: "March", option: "3" },
-        { name: "April" },
-        { name: "May" },
-        { name: "June" },
-        { name: "July" },
-        { name: "August" },
-        { name: "September" },
-        { name: "October" },
-        { name: "November" },
-        { name: "December" },
-      ],
+
       typeNameSelected: false,
     };
   },
@@ -237,6 +249,7 @@ export default {
     languages: {
       type: Array,
     },
+    islocaleChanged: Boolean,
   },
 
   methods: {
@@ -255,15 +268,11 @@ export default {
     },
     selectTypeOfPurchase(type) {
       this.isTypeSelected = true;
-      this.selected_type = "";
       this.selected_type = type.name;
       this.areTypesVisible = false;
       this.isTypeSel = false;
-      console.log(i18n.locale);
     },
     updateValue() {
-      let regex = /\d/g;
-      this.percent = this.percent.match(regex).join("");
       if (this.editName && +this.percent < 100) {
         this.rest_budget = (+this.total_budget_value * +this.percent) / 100;
       }
@@ -280,6 +289,11 @@ export default {
         this.purchases[this.priceEditing].price = +this.numberInput;
         this.purchases[this.dateEditing].dateInput = this.dateNow;
         this.purchases[this.typeEditing].types = this.selected_type;
+        console.log("this selected one", this.selected_type);
+        console.log(
+          "this selected one2",
+          this.purchases[this.typeEditing].types
+        );
         this.editing = null;
         this.priceEditing = null;
         this.dateEditing = null;
@@ -287,8 +301,8 @@ export default {
         this.editName = false;
         this.percent =
           parseInt(this.percent) -
-          (this.totalSum * 100) / this.total_budget_value +
-          "%";
+          (this.totalSum * 100) / this.total_budget_value; /* +
+          "%"; */
         this.rest_budget = +this.total_budget_value - this.totalSum;
         this.saveCounter();
         this.saveMainBudget();
@@ -307,7 +321,7 @@ export default {
           types: this.selected_type,
           isFavourite: false,
         });
-
+        console.log("purchases", this.purchases);
         this.arePurchasesVisible = true;
         this.sortedPro = [...this.purchases];
         this.editName = false;
@@ -332,7 +346,6 @@ export default {
           this.totalSum > this.perDayMed
         ) {
           this.medPriceAcc = true;
-
           setTimeout(() => {
             this.medPriceAcc = false;
           }, 8000);
@@ -365,8 +378,6 @@ export default {
       this.saveCounter();
       this.savePurchase();
       this.saveMainBudget();
-
-      Vue.forceUpdate();
     },
 
     editTodo(index) {
@@ -400,6 +411,14 @@ export default {
     },
 
     filterType(type) {
+      let month;
+      let day;
+      let optionDay;
+      let optionMonth;
+      let endDays;
+      let endMonth;
+      let typeObj;
+      let enObj;
       this.typeSelected = type.name;
       this.typeNameSelected = true;
       this.isDefault = false;
@@ -407,18 +426,69 @@ export default {
         if (type.name === "All" || type.name === "Все") {
           return this.purchases;
         }
-        const typeObj ={
-          'Еда':'Food',
-          "Транспорт":'Transport',
-          'Медицина':'Medicine',
-          'Интернет':'Internet',
-          'Другое':'Entertainment'
-        }
-        return  i18n.locale ==='en'? e.types === type.name : typeObj[type.name ] === e.types;
+        typeObj = {
+          Еда: "Food",
+          Транспорт: "Transport",
+          Медицина: "Medicine",
+          Связь: "Internet",
+          Другое: "Entertainment",
+        };
+
+        const rusValues = Object.values(typeObj);
+        const rusKeys = Object.keys(typeObj);
+        enObj = Object.assign(
+          ...rusValues.map((v, i) => ({ [v]: rusKeys[i] }))
+        );
+        return i18n.locale === "en"
+          ? type.name === e.types || type.name === typeObj[e.types]
+          : i18n.locale === "ru"
+          ? type.name === e.types || type.name === enObj[e.types]
+          : "";
       });
+      if (this.isMonthChoosen && this.selectedMonth.length > 12) {
+        this.sortedPro = this.purchases.filter((e) => {
+          month = e.dateInput.split("-")[1];
+          day = e.dateInput.split("-")[2];
+          if (month.startsWith("0")) {
+            month = month.split("")[1];
+          }
+          if (day.startsWith("0")) {
+            day = day.split("")[1];
+          }
+          optionDay = this.selectedMonth.split(".")[0];
+          if (optionDay.startsWith("0")) {
+            optionDay = optionDay.split("")[1];
+          }
+          optionMonth = this.selectedMonth.split(".")[1];
+          if (optionMonth.startsWith("0")) {
+            optionMonth = optionMonth.split("")[1];
+          }
+          endDays = this.selectedMonth.split(" - ")[1].split(".")[0];
+          if (/^0/g.test(endDays)) {
+            endDays = endDays.split("")[1];
+          }
+          endMonth = this.selectedMonth.split("-")[1].split(".")[1];
+          if (endMonth.startsWith("0")) {
+            endMonth = endMonth.split("")[1];
+          }
+          if (
+            Number(day) >= Number(optionDay) &&
+            Number(day) <= Number(endDays) &&
+            Number(month) >= Number(optionMonth) &&
+            Number(month) <= Number(endMonth)
+          ) {
+            return i18n.locale === "en"
+              ? type.name === e.types || type.name === typeObj[e.types]
+              : i18n.locale === "ru"
+              ? type.name === e.types || type.name === enObj[e.types]
+              : "";
+          }
+        });
+      }
     },
+
     selectPrice(price) {
-      this.isPriceChooses=false;
+      this.isPriceChooses = false;
       this.sortedPro = [...this.purchases];
       let month;
       let day;
@@ -427,11 +497,11 @@ export default {
       let endDays;
       let endMonth;
       this.sortedPro = this.sortedPro.filter((e) => {
-        return price.name === "High" || price.name==="Высокий"
+        return price.name === "High" || price.name === "Высокий"
           ? e.price > 100
-          : price.name === "Moderate" || price.name==='Средний'
+          : price.name === "Moderate" || price.name === "Средний"
           ? e.price >= 50 && e.price < 100
-          : price.name === "All" || price.name==='Все'
+          : price.name === "All" || price.name === "Все"
           ? this.purchases
           : e.price < 50;
       });
@@ -468,13 +538,13 @@ export default {
             Number(month) >= Number(optionMonth) &&
             Number(month) <= Number(endMonth)
           ) {
-            return price.name === "High" || price.name ===  "Высокий"
-          ? e.price > 100
-          : price.name === "Moderate" || price.name ==='Средний'
-          ? e.price >= 50 && e.price < 100
-          : price.name === "All" || price.name === 'Все'
-          ? this.purchases
-          : e.price < 50;
+            return price.name === "High" || price.name === "Высокий"
+              ? e.price > 100
+              : price.name === "Moderate" || price.name === "Средний"
+              ? e.price >= 50 && e.price < 100
+              : price.name === "All" || price.name === "Все"
+              ? this.purchases
+              : e.price < 50;
           }
         });
       }
@@ -529,8 +599,8 @@ export default {
         this.rest_budget = +prop_total_budget - this.totalSum;
         this.percent =
           parseInt(this.percent) -
-          (this.totalSum * 100) / prop_total_budget +
-          "%";
+          (this.totalSum * 100) / prop_total_budget; /*  +
+          "%"; */
 
         if (this.totalSum > this.perDayMed) {
           this.medPriceAcc = true;
@@ -551,6 +621,14 @@ export default {
         this.medPriceAcc = false;
       }, 3000);
       this.saveMainBudget();
+      this.isPlanChanged = true;
+      let vm = this;
+      setTimeout(() => {
+        vm.isPlanChanged = false;
+      }, 4000);
+
+      /*    this.$refs.budgetInfo.focus() */
+      console.log("refs", this.$refs.budgetInfo);
     },
   },
   created() {
@@ -586,6 +664,8 @@ export default {
   },
 
   mounted() {
+    console.log("it med", this.medPriceAcc);
+
     this.lan = i18n.locale;
     console.log(this.lan);
 
@@ -687,6 +767,16 @@ li {
   margin: 10px auto;
 }
 @media (min-width: 250px) and (max-width: 450px) {
+  .alert_med_price {
+    padding-bottom: 21px;
+
+    flex-direction: column;
+    gap: 2px;
+  }
+  .alert_med_price div {
+    margin-top: -15px;
+    padding-bottom: 10px;
+  }
   .inputs {
     width: 80%;
   }

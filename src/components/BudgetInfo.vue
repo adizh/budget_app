@@ -7,7 +7,11 @@
         class="form-control inputs"
         type="number"
         ref='budgetName'
-        :placeholder=" !isTotalChanged  ? 'type a total budget' : 'change the budget'"
+        :placeholder=" !isTotalChanged  ? $t(
+      'typeatotalbudget'
+        ) : $t(
+      'changebudget'
+        )"
       />
     </div>
     
@@ -18,7 +22,25 @@
         </button>
       <p>{{$t('leftBudget')}}  {{ rest_budget }} {{$t('som')}}</p>
       <div>{{ totalBudgetData | moment }}</div>
-      <div> {{$t('Perdaymedium')}}  {{ perDayMed }} {{$t('som')}}</div>
+      <div id="budgetInfo"> {{$t('Perdaymedium')}}  {{ perDayMed }} {{$t('som')}}</div>
+
+        <div
+      v-if='isPlanChanged'
+      class="alert alert-danger d-flex align-items-center"
+      role="alert"
+    >
+      <svg
+        class="bi flex-shrink-0 me-2"
+        width="24"
+        height="24"
+        role="img"
+        aria-label="Danger:"
+      >
+        <use xlink:href="#exclamation-triangle-fill" />
+      </svg>
+      <div> {{$t('accText2')}}  {{ perDayMed }} {{$t('som')}} </div>
+     
+    </div>
     </div>
  <div class='progress_bar'>
    <v-progress-circular
@@ -32,31 +54,13 @@
     </v-progress-circular>
  </div>
 
-<div
-      v-if="medPriceAcc"
-      class="alert alert-danger d-flex align-items-center"
-      role="alert"
-    >
-      <svg
-        class="bi flex-shrink-0 me-2"
-        width="24"
-        height="24"
-        role="img"
-        aria-label="Danger:"
-      >
-        <use xlink:href="#exclamation-triangle-fill" />
-      </svg>
-      <div> {{$t('accText')}} </div>
-      <button class="btn btn-danger" @click="changePerDayMed">
-         {{$t('Changetheplan')}}
-      </button>
-    </div>
 
 
 
     </section>
 </template>
 <script>
+import i18n from '../plugins/i18n.js'
 import moment from "moment";
     export default {
         name:'BudgetInfo',
@@ -73,7 +77,7 @@ import moment from "moment";
                  rest_budget: null,
                    perDayMed: null,
                      totalBudgetData: null,
-                     medPriceAcc:{
+                     isPlanChanged:{
                          type:Boolean
                      },
                      percent:NaN,   
@@ -103,22 +107,18 @@ changeTheTotalBudget(){
         },
           filters: {
     moment(date) {
-      return moment(date).format("MMMM Do YYYY");
+ return   i18n.locale==='ru'? moment(date).locale('ru').format('LLLL')
+ : moment(date).locale('en').format('LLLL')
+  
     },
-  },
-
+          },
+          
 computed:{
      theme(){
            let theme = localStorage.getItem("theme")
        
            return theme
        }
-},
-mounted(){
-  //let theme = localStorage.getItem("theme")
-
-    let htmlElement = document.documentElement;
-  console.log('htmlElement',htmlElement)
 }
 
     }

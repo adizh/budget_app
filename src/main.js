@@ -15,10 +15,10 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 // custom styles
 import './assets/css/styles.scss'
 
-/* import VGoogleTranslate from "v-google-translate"; */
+
 import i18n from "./plugins/i18n.js";
 
-/* Vue.use(VGoogleTranslate) */
+
 
 
 Vue.use(Vuetify)
@@ -32,10 +32,7 @@ Vue.component('date-picker', DatePicker);
 import FlagIcon from 'vue-flag-icon';
 
 Vue.use(FlagIcon);
-/* store.subscribe( (mutation, state) => {
-  localStorage.setItem('purchases', JSON.stringify(state.purchases));  
-  
-})  */
+
 
 new Vue({
   i18n,

@@ -29,20 +29,15 @@
             </div>
 
             <section >
-<!--                   <v-google-translate
-      :defaultLanguageCode="defaultLanguageCode"
-      @select="languageSelectedHandler"
-      style='width:13%'
-      class="translator_comp"
-      ref='lang'
-    />  -->
+
+
 <div>
     <button v-for="entry in languages" :key="entry.title" @click="changeLocale(entry.language)">
         <flag :iso="entry.flag" v-bind:squared=false /> <span  class="lan_title">{{entry.title}}</span>
     </button>
 </div>
    
-             <FormMode :languages='languages'/> 
+             <FormMode :languages='languages'  :islocaleChanged='islocaleChanged' @remount='remount'/> 
             </section>
         </div>
     </div>
@@ -50,6 +45,7 @@
 <script>
 
 import FormMode from "./components/FormMode"
+//import Vue from 'vue'
 import i18n from './plugins/i18n.js';
     export default {
         name: 'app',
@@ -59,6 +55,7 @@ FormMode
         data() {
             return {
                 darkMode: false,
+                islocaleChanged:false,
              lan:'',
               languages: [
             { flag: 'us', language: 'en', title: 'English' },
@@ -71,10 +68,16 @@ FormMode
                   localStorage.lan = this.lan;
           },
 
+remount(sort){
+    sort = true;
+  console.log('remounting.......',sort)
+},
         changeLocale(locale) {
         i18n.locale = locale;
- this.lan = i18n.locale;
+this.lan = i18n.locale;
 this.saveLan()
+this.islocaleChanged=true;
+ window.location.reload() 
     }
       },
         mounted() {
@@ -99,6 +102,7 @@ this.saveLan()
             } 
         },
         watch: {
+   
             darkMode: function () {
                 let htmlElement = document.documentElement;
                 if (this.darkMode) {
@@ -113,8 +117,7 @@ this.saveLan()
       
     }
 </script>
-*c6
-12
+
 <style>
 .columns{
     position:relative;

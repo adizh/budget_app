@@ -26,7 +26,7 @@
 .total{
   color: var(--dynamic-title-color); 
 }
-.no_purchase{
+.no_purchases,.no_purchase{
   color: var(--dynamic-title-color); 
 }
 .rows_table{
@@ -36,6 +36,9 @@ div .language{
   color: var(--dynamic-title-color);    
 }
 .lan_title{
+  color: var(--dynamic-title-color);    
+}
+.min_max_iden{
   color: var(--dynamic-title-color);    
 }
 div .eo__dropdown__menu{

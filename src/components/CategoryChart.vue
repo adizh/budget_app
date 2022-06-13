@@ -10,7 +10,7 @@
 </div>
 </div>
 </div>
-<p   v-show="!this.sortedPro.length" class='no_purchases'>no  purchases were found  with this type</p>
+<p   v-show="!this.sortedPro.length" class='no_purchases'>{{$t('Nopurhases')}}</p>
 
   </div>
 </template>
@@ -67,7 +67,7 @@ newTypeOptions(){
   for(let i=0;i<this.purchaseType2.length;i++){
 newObj.push(this.purchaseType2[i])
   }
-if(i18n.locale==='en'){
+if(i18n.locale ===  'en'){
 newObj.unshift({name:'All'})
 }else{
 newObj.unshift({name:'Все'})
@@ -80,7 +80,7 @@ newObj.unshift({name:'Все'})
     foodSum() {
       let count = [];
       this.purchases.map((e) => {
-        if (e.types === "Food") {
+        if (e.types === "Food" || e.types === "Еда") {
           count.push(e.price);
         }
       });
@@ -91,7 +91,7 @@ newObj.unshift({name:'Все'})
     transportSum() {
       let count = [];
       this.purchases.map((e) => {
-        if (e.types === "Transport") {
+        if (e.types === "Transport" || e.types === "Транспорт") {
           count.push(e.price);
         }
       });
@@ -102,7 +102,7 @@ newObj.unshift({name:'Все'})
     medicintSum() {
       let count = [];
       this.purchases.map((e) => {
-        if (e.types === "Medicine") {
+        if (e.types === "Medicine" || e.types === "Медицина") {
           count.push(e.price);
         }
       });
@@ -112,7 +112,7 @@ newObj.unshift({name:'Все'})
     internSum() {
       let count = [];
       this.purchases.map((e) => {
-        if (e.types === "Internet") {
+        if (e.types === "Internet" || e.types === "Связь") {
           count.push(e.price);
         }
       });
@@ -123,7 +123,7 @@ newObj.unshift({name:'Все'})
     entertainSum() {
       let count = [];
       this.purchases.map((e) => {
-        if (e.types === "Entertainment") {
+        if (e.types === "Entertainment"  || e.types === "Другое") {
           count.push(e.price);
         }
       });
@@ -142,7 +142,7 @@ newObj.unshift({name:'Все'})
         Entertainment: this.entertainSum,
       }
 
-    }else{
+    }else if(i18n.locale ==='ru'){
           catObj = {
         Еда: this.foodSum,
         Интернет: this.internSum,
@@ -198,8 +198,8 @@ newObj.unshift({name:'Все'})
     align-items: center;
   }
   .select_type{
-width: 56%;
-    padding: 13px;
+width: 86%;
+    padding: 6px;
     font-size: 22px;
   }
   .types{

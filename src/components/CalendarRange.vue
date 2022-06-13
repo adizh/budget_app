@@ -81,10 +81,9 @@ this.$emit('clearDate')
 @media (min-width:250px) and (max-width: 450px){
   #range_date{
        width: 43%;
-  }
-  .clear_btn{
-    padding: 12px 26px;
-    font-size: 21px;
+  }  .clear_btn{
+    padding: 2px 19px;
+    font-size: 16px;
   }
 }
 </style>
