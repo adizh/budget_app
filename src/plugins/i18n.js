@@ -5,7 +5,6 @@ Vue.use(VueI18n);
 
 const messages = {
     'en': {
-        welcomeMsg: 'Welcome to Your Vue.js App',
         selectedMonth2:'Select a month',
         clearData:'Clear',
         leftBudget:'Rest Budget ',
@@ -13,7 +12,7 @@ const messages = {
         Changebudget:'Change budget',
         som:'som',
         Perdaymedium:'Per day medium',
-        accText:'You accelareted per day medium plan.',
+        accText:'You accelareted per day medium plan. Your Per day medium: ',
         accText2:'Your plan now  is: ',
         Changetheplan:'Change the plan',
         Showchart:"Show main chart info",
@@ -32,6 +31,7 @@ const messages = {
             { name: "Transport" },
             { name: "Medicine" },
             { name: "Internet" },
+            { name: "Credit" },
             { name: "Entertainment" },
           ],
           default:'Add',
@@ -58,11 +58,20 @@ const messages = {
           ],
           Nopurhases:'No purchases were found',
           typeatotalbudget:'type a total budget',
-          changebudget:'change the budget'
+          changebudget:'change the budget',
+          TypeProblem:'Please select a type!',
+          customDef:'Do you want to customize your prices?',
+          Low:'Low',
+          Medium:'Medium',
+          High:'High',
+          customChanged:'Change price filters',
+          showAll:'Show all',
+          hideAll:'Hide all',
+          First:'First'
     }, 
 
     'ru': {
-        welcomeMsg: 'Bienvenido a tu aplicación Vue.js',
+
         selectedMonth2:'Выберите число',
         clearData:'Очистить',
         leftBudget:'Оставшийся бюджет ',
@@ -70,7 +79,7 @@ const messages = {
         Changebudget:'Изменить бюджет',
         som:'сом',
         Perdaymedium:'В среднем',
-        accText:'Вы превысили средний план.',
+        accText:'Вы превысили средний план. В среднем: ',
         accText2:'Ваш план теперь: ',
         Changetheplan:'Изменить план',
         Showchart:'Показать общий график',
@@ -89,6 +98,7 @@ const messages = {
             { name: "Транспорт" },
             { name: "Медицина" },
             { name: "Связь" },
+            { name: "Кредит" },
             { name: "Другое" },
           ],
           default:'Добавить',
@@ -115,13 +125,22 @@ const messages = {
           ],
           Nopurhases:'Покупок не было найдено',
           typeatotalbudget:"общий бюджет",
-          changebudget:'Изменить бюджете'
+          changebudget:'Изменить бюджет',
+          TypeProblem:'Пожалуйста, выберите тип!',
+          customDef:'Хотите настроить свои фильтры на цены?',
+          customChanged:'Изменить фильтры на цены',
+          Low:'Низкий',
+          Medium:'Средний',
+          High:'Высокий',
+          showAll:"Показать все",
+          hideAll:"Скрыть все",
+          First:'Первый'
     }
 };
 
 const i18n = new VueI18n({
     locale: 'en', // set locale
-    fallbackLocale: 'es', // set fallback locale
+    fallbackLocale: 'ru', // set fallback locale
     messages, // set locale messages
 });
 

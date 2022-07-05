@@ -1,6 +1,9 @@
-<template>
+
+ <template>
   <div class="expenses" v-show="filteredPro.length">
-    <table class="table table-bordered border-primary today_tables">
+    <table class="table table-bordered border-primary today_tables"  
+   :per-page="PER_PAGE"
+      :current-page="PAGE"    >
       <thead>
         <tr class="rows_table">
           <th scope="col">#</th>
@@ -10,31 +13,32 @@
           <th scope="col"></th>
         </tr>
       </thead>
-      <tbody v-for="(todo, index) in filteredPro" :key="todo.id">
+      <tbody v-for="(purchases,index) in filteredPro" :key="purchases.id">
         <tr
-          :title="
-            todo.price > 100
-              ? 'expensive'
-              : todo.price >= 50 && todo.price < 100
+
+
+           :title="
+            purchases.price > HIGH_PRICE_MAIN
+              ? 'expensive' 
+               : purchases.price >= MED_PRICE_MAIN &&  purchases.price <= HIGH_PRICE_MAIN
               ? 'moderate'
-              : 'normal'
+              : 'normal' 
           "
           :class="
-            todo.price > 100
-              ? 'expensiveRow'
-              : todo.price >= 50 && todo.price <= 100
+          purchases.price > HIGH_PRICE_MAIN   ? 'expensiveRow' :
+           purchases.price >= MED_PRICE_MAIN
+           && purchases.price <= HIGH_PRICE_MAIN
               ? 'moderateRow'
-              : 'normalRow'
+              : 'normalRow'  
           "
         >
-          <th scope="row">{{ index + 1 }}</th>
-          <td>{{ todo.name }}</td>
-          <td>{{ todo.price }} {{ $t("som") }}</td>
-          <td>
-            {{ todo.dateInput | moment }}
-            <button @click="addToFav(todo)">
+          <th scope="row">{{purchases.numOfPur}}</th>
+          <td>{{ purchases.name }}</td>
+          <td>{{ purchases.price }} {{ $t("som") }}</td>
+          <td>{{ purchases.dateInput | moment }}
+            <button @click="addToFav(purchases)">
               <svg
-                v-show="!todo.isFavourite"
+                v-show="!purchases.isFavourite"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -47,7 +51,7 @@
                 />
               </svg>
               <svg
-                v-show="todo.isFavourite"
+                v-show="purchases.isFavourite"
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
@@ -62,7 +66,7 @@
             </button>
           </td>
           <td>
-            <button class="btn editBtn" @click="editTodo(index)">
+            <a href="#editThisPage" class="btn editBtn" @click="editPurchase(index)">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
@@ -75,44 +79,32 @@
                   d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"
                 />
               </svg>
-            </button>
+            </a>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-</template>
-
+ </template>
 <script>
 import moment from "moment";
 import i18n from "../plugins/i18n";
+import {mapGetters,mapActions} from 'vuex'
 export default {
   name: "Purchases",
-  props: {
-    editName: {
-      type: Boolean,
-    },
-    favourites: {
-      type: Array,
-    },
-    arePurchasesVisible: {
-      type: Boolean,
-    },
-    sortedPro: {
-      type: Array,
-    },
-    filteredPro: Array,
-  },
   methods: {
-    addToFav(todo) {
-      this.$emit("addToFav", todo);
+    ...mapActions(['EDIT_PURCHASE','SET_SORTED_ONES','ADD_TO_FAV','GET_TOTAL_SUM']),
+    addToFav(purchase) {
+     this.ADD_TO_FAV(purchase)
     },
     moment() {
       return moment();
     },
-    editTodo(index) {
-      this.$emit("editTodo", index);
+    editPurchase(index){
+      this.EDIT_PURCHASE(index)
+      this.GET_TOTAL_SUM()
     },
+
   },
   filters: {
     moment(date) {
@@ -121,16 +113,30 @@ export default {
         : moment(date).locale("en").format("MMMM Do YYYY");
     },
   },
-  computed: {
-    beforeM() {
-      let sm = [];
-      if (this.purchases.length) {
-        sm = this.purchases;
-      }
-      return sm;
-    },
-  },
+  computed:{
+    ...mapGetters(['SORTED_PRO','PURCHASES','HIGH_PRICE_MAIN',
+    'MED_PRICE_MAIN','LOW_PRICE_MAIN','PAGE','PER_PAGE','IS_ALL_VISIBLE']),
+    filteredPro(){
+if(this.SORTED_PRO.length && !this.IS_ALL_VISIBLE){
+   let page = this.PAGE
+    return this.SORTED_PRO.slice( (page - 1) * this.PER_PAGE,
+      page * this.PER_PAGE) 
+}
+  else if (this.IS_ALL_VISIBLE){
+    return this.SORTED_PRO
+   }
+else{
+  return []
+}
 
+    },
+    
+  },
+ mounted(){
+if(this.PURCHASES.length){
+ this.SET_SORTED_ONES()
+}
+  } 
 };
 </script>
 

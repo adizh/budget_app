@@ -1,46 +1,47 @@
+
+
+
 <template>
-  <div   v-if="isCatVisible">
+  <div   v-if="IS_CATEGORY_VISIBLE">
     <pie-chart :data="categoryOptions"></pie-chart>
 
-<div class='selectType'>
-  <p @click='isTypeNameSelected = !isTypeNameSelected' class="select_type">{{ isDefault ? $t('typeFilter'):typeSelected}}</p>
+ <div class='selectType'>
+  <p @click='isTypeNameSelected = !isTypeNameSelected' class="select_type">{{ IS_DEFAULT_TYPE_SEL ? $t('typeFilter'):TYPE_SELECTED_FILTER}}</p>
 <div :class="isTypeNameSelected ? 'types':''">
 <div v-show='isTypeNameSelected'  @click='filterType(type)' v-for='type in  newTypeOptions' :key='type.name'>
   <p>{{type.name}}</p>
 </div>
 </div>
 </div>
-<p   v-show="!this.sortedPro.length" class='no_purchases'>{{$t('Nopurhases')}}</p>
+<p   v-show="!SORTED_PRO.length" class='no_purchases'>{{$t('Nopurhases')}}</p>
 
   </div>
 </template>
 
+
 <script>
+import {mapGetters,mapActions} from 'vuex'
 import i18n from '../plugins/i18n.js'
 export default {
   name: "CategoryChart",
   data() {
     return {
 isTypeNameSelected:false,
-   
+canvas:null,
     };
   },
-  props: {
-    purchaseType2: Array,
-    isCatVisible: Boolean,
-    typeSelected:String,
-    purchases:Array,
-    sortedPro:Array,
-    isDefault:Boolean
-  },
   methods: {
-filterType(type){
+    ...mapActions(['CAT_VISIBLE','FILTER_TYPE']),
+    
 
-  this.$emit('filterType',type)
+  
+
+     
+filterType(type){
+this.FILTER_TYPE(type)
   this.isTypeNameSelected=false
-  console.log('types',type)
-  console.log('sortedPro',this.sortedPro)
 },
+
           hideSelect() {
      
       this.isTypeNameSelected = false;
@@ -49,109 +50,66 @@ filterType(type){
   },
 
                   mounted() {
-    document.addEventListener("click", this.hideSelect.bind(this), true);
+    document.addEventListener("click", this.hideSelect.bind(this), true)
+        if (this.$store.state.purchases.length) {
+          this.CAT_VISIBLE()
+    }
  
-
-
-
-   
   },
   destroyed() {
     document.removeEventListener("click", this.hideSelect);
   },
   computed: {
-  
+  ...mapGetters(['IS_CATEGORY_VISIBLE','FOOD_SUM','TRANSPORT_SUM','MEDICINE_SUM','INTERNET_SUM',
+  'ENTERN_SUM',
+  'CREDIT_SUM','IS_DEFAULT_TYPE_SEL','TYPE_SELECTED_FILTER','SORTED_PRO']),
 
 newTypeOptions(){
   let newObj=[]
-  for(let i=0;i<this.purchaseType2.length;i++){
-newObj.push(this.purchaseType2[i])
+  for(let i=0;i<this.$t('purchaseType2').length;i++){
+newObj.push(this.$t('purchaseType2')[i])
   }
+ 
 if(i18n.locale ===  'en'){
 newObj.unshift({name:'All'})
 }else{
 newObj.unshift({name:'Все'})
 }
 
-  
-  return newObj
+return newObj
 },
 
-    foodSum() {
-      let count = [];
-      this.purchases.map((e) => {
-        if (e.types === "Food" || e.types === "Еда") {
-          count.push(e.price);
-        }
-      });
-      count = count.reduce((acc, rec) => acc + rec, 0);
-      return count
-    },
 
-    transportSum() {
-      let count = [];
-      this.purchases.map((e) => {
-        if (e.types === "Transport" || e.types === "Транспорт") {
-          count.push(e.price);
-        }
-      });
-      count = count.reduce((acc, rec) => acc + rec, 0);
-      return count;
-    },
-
-    medicintSum() {
-      let count = [];
-      this.purchases.map((e) => {
-        if (e.types === "Medicine" || e.types === "Медицина") {
-          count.push(e.price);
-        }
-      });
-      count = count.reduce((acc, rec) => acc + rec, 0);
-      return count;
-    },
-    internSum() {
-      let count = [];
-      this.purchases.map((e) => {
-        if (e.types === "Internet" || e.types === "Связь") {
-          count.push(e.price);
-        }
-      });
-      count = count.reduce((acc, rec) => acc + rec, 0);
-      return count;
-    },
-
-    entertainSum() {
-      let count = [];
-      this.purchases.map((e) => {
-        if (e.types === "Entertainment"  || e.types === "Другое") {
-          count.push(e.price);
-        }
-      });
-      count = count.reduce((acc, rec) => acc + rec, 0);
-      return count;
-    },
-
+   
     categoryOptions() {
-      let catObj={}
-      if(i18n.locale ==='en'){
-      catObj = {
-        Food: this.foodSum,
-        Internet: this.internSum,
-        Medicine: this.medicintSum,
-        Transport: this.transportSum,
-        Entertainment: this.entertainSum,
-      }
+     
 
+      
+
+       let catObj={}
+  
+   
+       if(i18n.locale ==='en'){
+      catObj = {
+        Food: this.FOOD_SUM,
+        Internet: this.INTERNET_SUM,
+        Medicine: this.MEDICINE_SUM,
+        Transport: this.TRANSPORT_SUM,
+        Credit:this.CREDIT_SUM,
+        Entertainment: this.ENTERN_SUM,
+      }
     }else if(i18n.locale ==='ru'){
           catObj = {
-        Еда: this.foodSum,
-        Интернет: this.internSum,
-        Медицина: this.medicintSum,
-        Транспорт: this.transportSum,
-        Другое: this.entertainSum,
+        Еда: this.FOOD_SUM,
+        Интернет: this.INTERNET_SUM,
+        Медицина: this.MEDICINE_SUM,
+        Транспорт: this.TRANSPORT_SUM,
+        Кредит:this.CREDIT_SUM,
+        Другое: this.ENTERN_SUM,
       }
-    }
-    return catObj
+    } 
+    return catObj 
+  
   },
   }
 };

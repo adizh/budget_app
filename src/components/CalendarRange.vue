@@ -1,7 +1,8 @@
+
 <template>
 <section>
-      <div  @click="areOptionVisible = !areOptionVisible" id="range_date" >
-      <p class='month_select'>{{  isDateSelected ? selectedMonth :  $t('selectedMonth2') }}</p>
+  <div  @click="areOptionVisible = !areOptionVisible" id="range_date">
+<p class='month_select'>{{  isDateSelected ? SELECTED_MONTH_CALENDAR :  $t('selectedMonth2') }}</p>
       <v-date-picker
         mode="date"
         id="date_picker"
@@ -12,44 +13,39 @@
         color="gray"
         is-dark
       />
-    </div>
-  <button class="btn btn-success clear_btn"  style='display:block; margin: 10px auto' @click="clearDate">{{$t('clearData')}}</button>
-      </section>
+  </div>
+    <button class="btn btn-success clear_btn"  style='display:block; margin: 10px auto' @click="clearDate">{{$t('clearData')}}</button>
+
+</section>
+
 </template>
 
 <script>
+import i18n from "../plugins/i18n"
+import {mapGetters,mapActions} from 'vuex'
     export default {
         name:"CalendarRange",
         data(){
             return{
-              width: window.innerWidth,
                 areOptionVisible:false,
+                isDateSelected:false,
                  range: {
         start: new Date(2020, 0, 1),
         end: new Date(2020, 0, 5),
-        
       },
             }
         },
-        props:{
-            selectedMonth:{
-                type:String
-            },
-            isDateSelected:Boolean,
-        },
         methods: {
+            ...mapActions(['SELECT_MONTH','CLEAR_DATE']),
             selectMonth(option){
-                this.$emit('selectMonth',option)
-            
-            },hideSelect() {
+                this.isDateSelected = true;
+this.SELECT_MONTH(option)
+            },
+            hideSelect() {
       this.areOptionVisible = false;
     },
       clearDate() {
-this.$emit('clearDate')
-    },
-     onResize() {
-      this.width = window.innerWidth;
-      
+this.CLEAR_DATE(i18n)
     },
         },
          created() {
@@ -61,6 +57,9 @@ this.$emit('clearDate')
       destroyed() {
        document.removeEventListener("click", this.hideSelect);
          window.removeEventListener("resize", this.onResize);
+  },
+  computed:{
+...mapGetters(['SELECTED_MONTH_CALENDAR'])
   }
     }
 </script>

@@ -1,31 +1,35 @@
+
+
 <template>
-    <section id='info'>
+
+<section id='info'>
   <div>
       <input
         @keyup.enter="totalBudget"
         v-model="total_budget"
         class="form-control inputs"
         type="number"
-        ref='budgetName'
+       
+         ref='budgetName'
         :placeholder=" !isTotalChanged  ? $t(
       'typeatotalbudget'
         ) : $t(
       'changebudget'
         )"
-      />
+      /><a v-show='PRICE_ACC_MED' href='#budgetName'></a>
     </div>
     
-   <div v-if="isTotalVisible"  class="total_budget"  >
-      <p>  {{$t('Totalbudget')}}  {{ total_budget_value }} {{$t('som')}} </p>
+   <div v-if="IS_TOTAL_VISIBLE"  class="total_budget"  >
+      <p>  {{$t('Totalbudget')}}  {{TOTAL_BUDGET}} {{$t('som')}} </p>
         <button type='button' @click='changeTheTotalBudget' class='btn btn-danger'>
         {{$t('Changebudget')}} 
         </button>
-      <p>{{$t('leftBudget')}}  {{ rest_budget }} {{$t('som')}}</p>
-      <div>{{ totalBudgetData | moment }}</div>
-      <div id="budgetInfo"> {{$t('Perdaymedium')}}  {{ perDayMed }} {{$t('som')}}</div>
+      <p>{{$t('leftBudget')}}  {{ REST_BUDGET}} {{$t('som')}}</p>
+      <div>{{ this.$store.state.totalBudgetData | moment }}</div>
+      <div > {{$t('Perdaymedium')}}  {{ PER_DAY_MED }} {{$t('som')}}</div>
 
-        <div
-      v-if='isPlanChanged'
+        <div id="budgetInfo"
+      v-if='this.$store.state.isPlanChanged'
       class="alert alert-danger d-flex align-items-center"
       role="alert"
     >
@@ -38,7 +42,7 @@
       >
         <use xlink:href="#exclamation-triangle-fill" />
       </svg>
-      <div> {{$t('accText2')}}  {{ perDayMed }} {{$t('som')}} </div>
+      <div> {{$t('accText2')}}  {{ PER_DAY_MED }} {{$t('som')}} </div>
      
     </div>
     </div>
@@ -46,11 +50,11 @@
    <v-progress-circular
       :size="100"
       :width="15"
-      :value="percent"
-      :style="parseInt(percent <= 50) ? { color: 'red' } : { color: 'teal' }"
-      :color="percent ? 'teal' : 'red'"
+      :value="PERCENT"
+      :style="parseInt(PERCENT <= 50) ? { color: 'red' } : { color: 'teal' }"
+      :color="PERCENT ? 'teal' : 'red'"
     >
-      {{ isPercentVisible ? parseInt(percent) + "%" : 0 }}
+      {{ this.$store.state.isPercentVisible ? parseInt(PERCENT) + "%" : 0 }}
     </v-progress-circular>
  </div>
 
@@ -60,50 +64,34 @@
     </section>
 </template>
 <script>
+
 import i18n from '../plugins/i18n.js'
 import moment from "moment";
+import {mapActions,mapGetters} from 'vuex'
     export default {
         name:'BudgetInfo',
         data(){
             return{
-              total_budget:'',
-             
+          
              isTotalChanged:false
             }
         },
-        props:{
-                isTotalVisible:Boolean,
-                isPercentVisible:Boolean,
-                 rest_budget: null,
-                   perDayMed: null,
-                     totalBudgetData: null,
-                     isPlanChanged:{
-                         type:Boolean
-                     },
-                     percent:NaN,   
-                     total_budget_value:null    
-        },
+      
         methods: {
+          ...mapActions(['INPUT_TOTAL_BUDGET']),
              moment() {
       return moment();
     },
+    
              totalBudget() {
-      this.$emit('totalBudget',this.total_budget)
-   setTimeout(() => {
-this.total_budget = ''
-   },1000) 
+              this.INPUT_TOTAL_BUDGET(this.total_budget)      
     },
-    changePerDayMed(){
-this.$emit('changePerDayMed')
-    },
-
 
 changeTheTotalBudget(){
   this.isTotalChanged=true;
   this.total_budget=''
- this.$refs.budgetName.focus()
+  this.$refs.budgetName.focus() 
 }
-
         },
           filters: {
     moment(date) {
@@ -114,14 +102,24 @@ changeTheTotalBudget(){
           },
           
 computed:{
-     theme(){
-           let theme = localStorage.getItem("theme")
-       
-           return theme
-       }
-}
+  ...mapGetters(['TOTAL_BUDGET','REST_BUDGET','PERCENT','PER_DAY_MED','PRICE_ACC_MED','IS_TOTAL_VISIBLE']),
 
+                 total_budget:{
+                get () {
+      return this.$store.state.total_budget
+    },
+                set (value) {
+      this.$store.commit('updateTotalInput', value)
     }
+
+}
+},
+mounted(){
+
+
+}
+    }
+    
 </script>
 
 <style  scoped>

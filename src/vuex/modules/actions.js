@@ -1,0 +1,55 @@
+let actions={
+SELECT_TYPE_PUR({commit},type){
+commit('setTypeOfPur',type)
+},
+ADD_PURCHASES({commit}){
+    commit('addPurchases')
+},
+EDIT_PURCHASE({commit},index){
+    commit('editPurchase',index)
+},
+SUBMIT_CUSTOM_PRICE({commit},{lowPrice,medPrice,highPrice}){
+    commit('submitCustomPrice',{lowPrice,medPrice,highPrice})
+},
+SELECT_MONTH({commit},option){
+    commit('selectMonth',option)
+},
+SET_SORTED_ONES({commit}){
+    commit('setSorted')
+},
+CLEAR_DATE({commit},lan) {
+    commit('clearDate',lan)
+},
+ADD_TO_FAV({commit},purchase){
+    commit('addToFav',purchase)
+},
+INPUT_TOTAL_BUDGET({commit},total_budget){
+    commit('totalBudget',total_budget)
+},
+GET_TOTAL_SUM({commit}){
+    commit('getTotalSum')
+},
+CHANGE_PER_DAY({commit}){
+    commit('changePerDayMed')
+},
+CLOSE_PRICE_WARN({commit}){
+    commit('closePriceWarn')
+},
+SELECT_PRICE({commit},price){
+    commit('selectPrice',price)
+},
+CAT_VISIBLE({commit}){
+    commit('isCatVis')
+},
+FILTER_TYPE({commit},type){
+    commit('filterType',type)
+},
+SELECT_CHART_MONTH({commit},option){
+    commit('selectChartMonth',option)
+},
+SHOW_ALL({commit}){
+    commit('showAll')
+}
+
+}
+export default actions

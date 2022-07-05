@@ -8,8 +8,6 @@
         data-toggle="modal"
         data-target="#exampleModal"
       >
-  
-
         {{ $t("showfavourites") }}
       </button>
     </div>
@@ -39,28 +37,31 @@
           </div>
           <div class="modal-body">
             <table class="table table-bordered border-primary today_tables">
-              <tbody v-for="(todo, index) in purchases" :key="todo.id">
+              <tbody v-for="(purchase, index) in PURCHASES" :key="purchase.id">
                 <tr
-                  v-show="todo.isFavourite"
-                  :title="
-                    todo.price > 100
-                      ? 'expensive'
-                      : todo.price >= 50 && todo.price < 100
-                      ? 'moderate'
-                      : 'normal'
-                  "
-                  :class="
-                    todo.price > 100
-                      ? 'expensiveRow'
-                      : todo.price >= 50 && todo.price <= 100
-                      ? 'moderateRow'
-                      : 'normalRow'
-                  "
+                  v-show="purchase.isFavourite"
+
+                     :title="
+            purchase.price > HIGH_PRICE_MAIN
+              ? 'expensive' 
+               : purchase.price >= MED_PRICE_MAIN &&  purchase.price <= HIGH_PRICE_MAIN
+              ? 'moderate'
+              : 'normal' 
+          "
+          :class="
+          purchase.price > HIGH_PRICE_MAIN   ? 'expensiveRow' :
+           purchase.price >= MED_PRICE_MAIN
+           && purchase.price <= HIGH_PRICE_MAIN
+              ? 'moderateRow'
+              : 'normalRow'  
+          "
+                 
+               
                 >
                   <th scope="row">{{ index + 1 }}</th>
-                  <td>{{ todo.name }}</td>
-                  <td>{{ todo.price }} {{ $t("som") }}</td>
-                  <td>{{ todo.dateInput | moment }}</td>
+                  <td>{{ purchase.name }}</td>
+                  <td>{{ purchase.price }} {{ $t("som") }}</td>
+                  <td>{{ purchase.dateInput | moment }}</td>
                 </tr>
               </tbody>
             </table>
@@ -83,9 +84,9 @@
 <script>
 import i18n from "../plugins/i18n";
 import moment from "moment";
+import {mapGetters} from 'vuex'
 export default {
   name: "Favourites",
-  components: {},
   filters: {
     moment(date) {
       return i18n.locale === "ru"
@@ -99,11 +100,10 @@ export default {
       return moment();
     },
   },
-  props: {
-    purchases: {
-      type: Array,
-    },
-  },
+ computed: {
+  ...mapGetters(['PURCHASES','HIGH_PRICE_MAIN',
+    'MED_PRICE_MAIN','LOW_PRICE_MAIN'])
+ }
 };
 </script>
 

@@ -1,13 +1,16 @@
+
+
+
 <template>
   <div>
     <div class="monthChart">
       <p class="each_month" @click="isMonthSelected = !isMonthSelected">
-        {{ !isMonthVisible ? eachMonthChart : $t("selMonthChart") }}
+        {{ !IS_MONTH_CHOOSEN ? EACH_MONTH_CHART : $t("selMonthChart") }}
       </p>
       <div :class="isMonthSelected ? 'all_info_chart' : ''">
         <div
           v-show="isMonthSelected"
-          v-for="option in monthChartsOption"
+          v-for="option in $t('monthChartsOption')"
           :key="option.name"
         >
           <p @click="selectChartMonth(option)" class="month_chart_">
@@ -18,16 +21,16 @@
     </div>
     <line-chart
       v-show="
-        eachMonthChart !== 'Month chart' && JSON.stringify(aprilData).length > 2
+        EACH_MONTH_CHART !== 'Month chart' && JSON.stringify(EACH_MONTH_DATA).length > 2
       "
-      :data="aprilData"
+      :data="EACH_MONTH_DATA"
     ></line-chart>
 
     <div
       class="no_purchase"
       v-show="
-        JSON.stringify(aprilData).length <= 2 &&
-        eachMonthChart !== 'Month chart'
+        JSON.stringify(EACH_MONTH_DATA).length <= 2 &&
+        EACH_MONTH_CHART !== 'Month chart'
       "
     >
       {{ $t("Nopurhases") }}
@@ -35,27 +38,16 @@
   </div>
 </template>
 <script>
+
+import {mapGetters,mapActions} from 'vuex'
 export default {
   name: "ChartInfo",
 
   methods: {
+    ...mapActions(['SELECT_CHART_MONTH']),
     selectChartMonth(option) {
-      this.$emit("selectNameChart", option);
+      this.SELECT_CHART_MONTH(option)
       this.isMonthSelected = false;
-    },
-  },
-  props: {
-    purchases: Array,
-    eachMonthChart: {
-      type: String,
-    },
-    isChartVisible: {
-      type: Boolean,
-      default: false,
-    },
-    isMonthVisible: Boolean,
-    monthChartsOption: {
-      type: Array,
     },
   },
   data() {
@@ -64,47 +56,10 @@ export default {
     };
   },
   computed: {
-    aprilData() {
-      let obj2 = {};
-      let day;
-      let price = [];
-      let datArr = [];
-      this.purchases &&
-        this.purchases.map((e) => {
-          let month;
-          month = e.dateInput.split("-")[1];
-          day = e.dateInput.split("-")[2];
-          if (month.startsWith("0")) {
-            month = month.split("")[1];
-          }
-          if (day.startsWith("0")) {
-            day = day.split("")[1];
-          }
-
-          let monthName = this.monthChartsOption.map((e) => e.name);
-          let isMonthObj = {};
-          for (let i = 0; i < monthName.length; i++) {
-            isMonthObj[monthName[i]] = `${i + 1}`;
-          }
-          let mnObjDays = Array.from(Object.values(isMonthObj));
-          let reversedMonth = {};
-          for (let i = 0; i < mnObjDays.length; i++) {
-            reversedMonth[mnObjDays[i]] = monthName[i];
-          }
-          if (this.eachMonthChart === reversedMonth[month]) {
-            price.push(e.price);
-
-            datArr.push(`2022-${isMonthObj[this.eachMonthChart]}-${day}`);
-          }
-        });
-      obj2 = datArr.reduce(
-        (acc, rec, i) => ((acc[rec] = (acc[rec] || 0) + price[i]), acc),
-        {}
-      );
-      console.log("obj2 length", JSON.stringify(obj2).length);
-      return obj2;
-    },
+    ...mapGetters(['IS_MONTH_CHOOSEN','EACH_MONTH_CHART','EACH_MONTH_DATA']),
+   
   },
+
 };
 </script>
 

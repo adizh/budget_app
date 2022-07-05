@@ -1,10 +1,14 @@
+
+
+
+
 <template>
   <div
-    :class="theme === 'dark' ? 'dark_theme' : 'light_theme'"
+  
     class="filterByPrice"
   >
     <p @click="arePricesVisible = !arePricesVisible">
-      {{ isPriceChooses ? $t("priceFilter") : priceName }}
+      {{ IS_PRICE_CHOOSEN ? $t("priceFilter") : priceName }}
     </p>
     <div
       v-show="arePricesVisible"
@@ -18,6 +22,7 @@
 </template>
 
 <script>
+import {mapGetters,mapActions} from 'vuex'
 export default {
   name: "PriceFilter",
   data() {
@@ -26,23 +31,15 @@ export default {
       priceName: "",
     };
   },
-  props: {
-    sortedPro: {
-      type: Array,
-    },
-    isPriceChooses: Boolean,
-  },
   computed: {
-    theme() {
-      let theme = localStorage.getItem("theme");
+    ...mapGetters(['IS_PRICE_CHOOSEN']),
 
-      return theme;
-    },
   },
   methods: {
+    ...mapActions(['SELECT_PRICE']),
     selectPrice(price) {
       this.priceName = price.name;
-      this.$emit("selectPrice", price);
+      this.SELECT_PRICE(price)
     },
     hideSelect() {
       this.arePricesVisible = false;
@@ -72,12 +69,8 @@ export default {
 .price_option {
   padding: 4px;
 }
-.dark_theme {
-  color: white;
-}
-.light_theme {
-  color: #000000;
-}
+
+
 .price_option:hover {
   display: inline-block;
   border-radius: 4px;
