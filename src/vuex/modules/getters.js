@@ -1,75 +1,75 @@
 import i18n from '../../plugins/i18n.js'
 
 
-let getters={
-    NAME_INPUT(state){
-        return state.nameInput
-    },
-    IS_TYPE_SEL(state){
-        return state.isTypeSel
-    },
-    SELECTED_TYPE_ADD(state){
-        return state.selected_type        
-    },
-    IS_NAME_SMALL(state){
-        return state.isNameSmall
-    },
-  TOTAL_SUM(state){
+let getters = {
+  NAME_INPUT(state) {
+    return state.nameInput
+  },
+  IS_TYPE_SEL(state) {
+    return state.isTypeSel
+  },
+  SELECTED_TYPE_ADD(state) {
+    return state.selected_type
+  },
+  IS_NAME_SMALL(state) {
+    return state.isNameSmall
+  },
+  TOTAL_SUM(state) {
     return state.totalSum
   },
-    IS_PRICE_NEG(state){
-        return state.isPriceNegative
-    },
-    IS_TYPE_SELEC(state){
-        return state.typeHasNotSel
-    },
-EDIT_NAME(state){
+  IS_PRICE_NEG(state) {
+    return state.isPriceNegative
+  },
+  IS_TYPE_SELEC(state) {
+    return state.typeHasNotSel
+  },
+  EDIT_NAME(state) {
     return state.editName
-},
-PURCHASES(state){
-   return state.purchases
-},
-PRICE_ACC_MED(state){
+  },
+  PURCHASES(state) {
+    return state.purchases
+  },
+  PRICE_ACC_MED(state) {
     return state.medPriceAcc
-},
-SORTED_PRO(state){
-return  state.sortedPro
+  },
+  SORTED_PRO(state) {
+    return state.sortedPro
 
-},
-HIGH_PRICE_MAIN(state){
+  },
+  HIGH_PRICE_MAIN(state) {
     return state.highPrice
-},
-MED_PRICE_MAIN(state){
+  },
+  MED_PRICE_MAIN(state) {
     return state.medPrice
-},
-LOW_PRICE_MAIN(state){
-    return state.lowPrice 
-},
-SELECTED_MONTH_CALENDAR(state){
+  },
+  LOW_PRICE_MAIN(state) {
+    return state.lowPrice
+  },
+  SELECTED_MONTH_CALENDAR(state) {
     return state.selectedMonth
-},
-TOTAL_BUDGET(state){
+  },
+  TOTAL_BUDGET(state) {
     return state.saved_total_budget
-},
-REST_BUDGET(state){
+  },
+  REST_BUDGET(state) {
     return state.rest_budget
-},
-PER_DAY_MED(state){
+  },
+  PER_DAY_MED(state) {
     return state.perDayMed
-},
-PERCENT(state){
+  },
+  PERCENT(state) {
     return state.percent
-},
-  IS_TOTAL_VISIBLE(state){
+  },
+  IS_TOTAL_VISIBLE(state) {
     return state.isTotalVisible
   },
-  IS_PRICE_CHOOSEN(state){
+  IS_PRICE_CHOOSEN(state) {
     return state.isPriceChooses
   },
-  IS_CATEGORY_VISIBLE(state){
+  IS_CATEGORY_VISIBLE(state) {
     return state.isCatVisible
   },
-  NEW_TYPE(state){
+  NEW_TYPE(state) {
     return state.newType
   },
   FOOD_SUM(state) {
@@ -114,20 +114,20 @@ PERCENT(state){
     count = count.reduce((acc, rec) => acc + rec, 0);
     return count;
   },
-CREDIT_SUM(state){
- let count = [];
+  CREDIT_SUM(state) {
+    let count = [];
     state.purchases.map((e) => {
-      if (e.types === "Credit"  || e.types === "Кредит") {
+      if (e.types === "Credit" || e.types === "Кредит") {
         count.push(e.price);
       }
     });
     count = count.reduce((acc, rec) => acc + rec, 0);
     return count;
-},
+  },
   ENTERN_SUM(state) {
     let count = [];
     state.purchases.map((e) => {
-      if (e.types === "Entertainment"  || e.types === "Другое") {
+      if (e.types === "Entertainment" || e.types === "Другое") {
         count.push(e.price);
       }
     });
@@ -136,10 +136,10 @@ CREDIT_SUM(state){
   },
 
 
-  IS_DEFAULT_TYPE_SEL(state){
+  IS_DEFAULT_TYPE_SEL(state) {
     return state.isDefault
   },
-  TYPE_SELECTED_FILTER(state){
+  TYPE_SELECTED_FILTER(state) {
     return state.typeSelected
   },
   janTotalSum(state) {
@@ -347,11 +347,11 @@ CREDIT_SUM(state){
       return acc + rec;
     }, 0);
     return count;
-  }, 
-  IS_MONTH_CHOOSEN(state){
+  },
+  IS_MONTH_CHOOSEN(state) {
     return state.isMonthVisible
   },
-  EACH_MONTH_CHART(state){
+  EACH_MONTH_CHART(state) {
     return state.eachMonthChart
   },
   EACH_MONTH_DATA(state) {
@@ -370,8 +370,8 @@ CREDIT_SUM(state){
         if (day.startsWith("0")) {
           day = day.split("")[1];
         }
-        let monthName = i18n.locale=== 'en' ? i18n.messages.en.monthChartsOption.map((e) => e.name) :
-        i18n.messages.ru.monthChartsOption.map((e)=>e.name)
+        let monthName = i18n.locale === 'en' ? i18n.messages.en.monthChartsOption.map((e) => e.name) :
+          i18n.messages.ru.monthChartsOption.map((e) => e.name)
         let isMonthObj = {};
         for (let i = 0; i < monthName.length; i++) {
           isMonthObj[monthName[i]] = `${i + 1}`;
@@ -391,20 +391,20 @@ CREDIT_SUM(state){
       (acc, rec, i) => ((acc[rec] = (acc[rec] || 0) + price[i]), acc),
       {}
     );
-    
+
     return obj2;
   },
-  PAGE(state){
+  PAGE(state) {
     return state.page
   },
-  PER_PAGE(state){
+  PER_PAGE(state) {
     return state.perPage
   },
-  IS_ALL_VISIBLE(state){
+  IS_ALL_VISIBLE(state) {
     return state.isAllVisible
   },
-PURCHASE_TYPES(state){
-  return i18n.locale==='en' ? state.purchaseType : state.purchaseTypeRu
-}
+  PURCHASE_TYPES(state) {
+    return i18n.locale === 'en' ? state.purchaseType : state.purchaseTypeRu
+  }
 }
 export default getters

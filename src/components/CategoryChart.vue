@@ -85,10 +85,7 @@ return newObj
      
 
       
-
        let catObj={}
-  
-   
        if(i18n.locale ==='en'){
       catObj = {
         Food: this.FOOD_SUM,
