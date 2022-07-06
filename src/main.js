@@ -19,7 +19,7 @@ import i18n from "./plugins/i18n.js";
 
 
 import store from './vuex/store.js'
-
+ /* eslint-disable */
 
 
 Vue.use(BootstrapVue)
